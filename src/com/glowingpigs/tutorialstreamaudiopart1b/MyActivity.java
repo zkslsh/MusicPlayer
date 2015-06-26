@@ -61,11 +61,16 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 
 	private LinearLayout list;
 	private LinearLayout linearLayout;
+	
+	private Boolean isListView = false;
+	private Boolean isRightContainer = false;
+	
 	private Button list_Button;
 	private Button play_Button; // PLAY 버튼
 	private Button pause_Button; // PAUSE 버튼
 	private Button back_Button;
 	private Button home_Button;
+	
 
 	//
 	private Cursor audiocursor;
@@ -78,7 +83,7 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 	private TextView filesize_View;
 	private TextView position_View;
 	private ImageView image_View;
-	
+	//private TextView mContext;
 
 	//
 	private myPlayService mService = null;
@@ -137,8 +142,13 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 
 		list = (LinearLayout) findViewById(R.id.List);
 		linearLayout = (LinearLayout) findViewById(R.id.Right_Container);
+		
+		isListView = false;
+		isRightContainer = true;
+		
 		list_Button = (Button) findViewById(R.id.list);
 		home_Button = (Button) findViewById(R.id.home);
+		back_Button = (Button) findViewById(R.id.back);
 
 		Button service_end = (Button) findViewById(R.id.rw);
 		Button service_ff = (Button) findViewById(R.id.ff);
@@ -155,6 +165,7 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 		linearLayout.setVisibility(View.VISIBLE);
 		list.setVisibility(View.INVISIBLE);
 
+		//왼쪽 상단에 홈 버튼 눌렀을때 이벤트 발생하게 하는 소스 시작
 		home_Button.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -171,6 +182,32 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 			}
 
 		});
+		//왼쪽 상단에 홈 버튼 눌렀을때 이벤트 발생하게 하는 소스 끝
+		
+	//왼쪽 상단에 back 버튼 눌렀을때 이벤트 발생하게 하는 소스 시작
+		
+		back_Button.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				if(isListView == true){
+					
+					list.setVisibility(View.INVISIBLE);
+					linearLayout.setVisibility(View.VISIBLE);
+					
+					isListView = false;
+					isRightContainer = true;					
+				}else{
+					home_Button.performClick();						
+				}
+				
+				
+				
+			}
+		});
+		
+		//왼쪽 상단에 back 버튼 눌렀을때 이벤트 발생하게 하는 소스 끝
 
 		list_Button.setOnClickListener(new OnClickListener() {
 
@@ -179,9 +216,14 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 				// list_Button.setSelected(true);
 
 				// list_Button.setPressed(true);
-
+				
+				list.setVisibility(View.VISIBLE);
+				linearLayout.setVisibility(View.INVISIBLE);
+				
+				isListView = true;
+				isRightContainer = false;				
+				
 				init_phone_audio_grid();
-
 			}
 		});
 
@@ -196,26 +238,27 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 			setListeners();
 		} catch (Exception e) {
 			e.printStackTrace();
+			/*
 			Toast.makeText(getApplicationContext(),
 					e.getClass().getName() + " " + e.getMessage(),
-					Toast.LENGTH_LONG).show();
+					Toast.LENGTH_LONG).show();*/
 		}
 	}
 
-	// 0625 수정한 소스 시작
-	//album art 가져오는 것
-	
+	// 0625  소스 수정 시작 
+	//album art 소스
 	/*
+	
 	private static final BitmapFactory.Options sBitmapOptionsCache = new BitmapFactory.Options();
 	private static final Uri sArtworkUri = Uri
 			.parse("content://media/external/audio/albumart");
 
 	
 	public Bitmap getBitmapImage(int id, int w, int h) {
-		ContentResolver res = mContext.getContentResolver();
+		ContentResolver res = (ContentResolver) mContext.getContentDescription();
 		Uri uri = ContentUris.withAppendedId(sArtworkUri, id);
 		image_View = (ImageView)findViewById(R.id.Image_View);
-		image_View.setImageURI(art_uri);
+		image_View.setImageURI(uri);
 		if (uri != null) {
 			ParcelFileDescriptor fd = null;
 			try {
@@ -260,7 +303,8 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 		return null;
 	}
 */
-	// 0625수정한 소스 끝
+	// 0625 수정 소스 끝
+	
 
 	// -- Broadcast Receiver to update position of seekbar from service --
 	private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
@@ -543,7 +587,8 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 				MediaStore.Audio.Media.DISPLAY_NAME,
 				MediaStore.Audio.Media.SIZE, MediaStore.Audio.Media.DURATION,
 				MediaStore.Audio.Media.ARTIST, MediaStore.Audio.Media.ALBUM,
-				MediaStore.Audio.Media.YEAR, MediaStore.Audio.Media.SIZE };
+				MediaStore.Audio.Media.YEAR, MediaStore.Audio.Media.SIZE
+				};
 		audiocursor = managedQuery(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
 				proj, null, null, null);
 		count = audiocursor.getCount();
@@ -592,6 +637,9 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 					.getColumnIndexOrThrow(MediaStore.Audio.Media.YEAR);
 			// audiocursor.moveToPosition(position);
 			year_View.setText(audiocursor.getString(audio_column_index));
+			
+
+					
 
 			long timeInmillisec = Long.parseLong(iduration);
 			long duration = timeInmillisec / 1000;
@@ -611,9 +659,19 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 
 			buttonPlayStop.setBackgroundResource(R.drawable.pause_button);
 			boolMusicPlaying = true;
+			once = false;
 			playAudio();
 		}
 	};
+	
+	
+
+	@Override
+	protected void onRestart() {
+		// TODO Auto-generated method stub
+		super.onRestart();
+		seekBar = (SeekBar)findViewById(R.id.progress);
+	}
 
 	public class audioAdapter extends BaseAdapter {
 		private Context vContext;
@@ -703,7 +761,8 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 						MediaStore.Audio.Media.ALBUM,
 						MediaStore.Audio.Media.ARTIST,
 						MediaStore.Audio.Media.YEAR,
-						MediaStore.Audio.Media.SIZE };
+						MediaStore.Audio.Media.SIZE
+						};
 				@SuppressWarnings("deprecation")
 				Cursor cursor = managedQuery(
 						MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, proj,
