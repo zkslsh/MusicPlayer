@@ -109,6 +109,8 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 	private int seekMax;
 	private static int songEnded = 0;
 	boolean mBroadcastIsRegistered;
+	
+	private int total_cnt = 0;
 
 	// --Set up constant ID for broadcast of seekbar position--
 	public static final String BROADCAST_SEEKBAR = "com.glowingpigs.tutorialstreamaudiopart1b.sendseekbar";
@@ -178,9 +180,19 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 			public boolean onLongClick(View v) {
 				// TODO Auto-generated method stub
 				if(mBound){
-					int position = position_main + 1;
-					position_main += 1;
-					//Log.i("position2", String.valueOf(position));
+					if(once!=false){
+
+					int position;
+					total_cnt = PhoneAideoList.getCount();
+					
+					if(position_main + 1>= total_cnt){						
+						position_main = -1;
+						position = position_main + 1; 
+						position_main += 1;
+					}else{
+						position = position_main + 1;
+						position_main += 1;
+					}
 					
 					list.setId(position);
 					audio_column_index = audiocursor
@@ -256,7 +268,11 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 					boolMusicPlaying = true;
 					once = false;
 					playAudio();				
-					return true;
+						return true;
+					}else{
+						return false;
+					
+					}
 				}else{
 					return false;
 				}
@@ -280,14 +296,124 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 			}
 		});
 		//0629 끝
+		
+		
 		//rw main button 0629 시작
+		service_rw.setOnLongClickListener(new OnLongClickListener() {
+			
+			@Override
+			public boolean onLongClick(View v) {
+				// TODO Auto-generated method stub
+				if(mBound){
+					if(once!=false){
+						int position;
+						total_cnt = PhoneAideoList.getCount();
+						
+						if(position_main > 0){						
+							position  = position_main - 1;
+							position_main -= 1;
+						}else{
+							position_main = total_cnt;
+							position = position_main - 1;
+							position_main -= 1;
+						}
+						
+						//Log.i("position2", String.valueOf(position));
+						
+						list.setId(position);
+						audio_column_index = audiocursor
+								.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA);
+						//position_View.setText(audiocursor.getString(audio_column_index));
+						audiocursor.moveToPosition(position);
+	
+	
+						// filename = audiocursor.getString(audio_column_index);
+						strAudioLink = audiocursor.getString(audio_column_index);
+						position_View.setText(strAudioLink);			
+	
+						// audioview.setaudioPath(filename);
+						audiocursor.moveToPosition(position);
+	
+						audio_column_index = audiocursor
+								.getColumnIndexOrThrow(MediaStore.Audio.Media.DISPLAY_NAME);
+						// movie_Name.setText(audiocursor.getString(audio_column_index));
+						audiocursor.moveToPosition(position);
+	
+						audio_column_index = audiocursor
+								.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION);
+						String iduration = audiocursor.getString(audio_column_index);
+						// audiocursor.moveToPosition(position);
+	
+						audio_column_index = audiocursor
+								.getColumnIndexOrThrow(MediaStore.Audio.Media.ARTIST);
+						// audiocursor.moveToPosition(position);
+						artist_View.setText(audiocursor.getString(audio_column_index));
+	
+						audio_column_index = audiocursor
+								.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM);
+						// audiocursor.moveToPosition(position);
+						album_View.setText(audiocursor.getString(audio_column_index));
+						
+	
+						audio_column_index = audiocursor
+								.getColumnIndexOrThrow(MediaStore.Audio.Media.YEAR);
+						// audiocursor.moveToPosition(position);
+						year_View.setText(audiocursor.getString(audio_column_index));
+						
+						audio_column_index = audiocursor
+								.getColumnIndexOrThrow(MediaStore.Audio.Media.SIZE);
+						//filesize_View.setText(audiocursor.getString(audio_column_index));
+						
+						String size = audiocursor.getString(audio_column_index);
+	
+						long lsize = Long.parseLong(size);
+						double dsize = lsize / 1000000;
+						String ssize = String.format("%4.1f", dsize);
+	
+						filesize_View.setText(ssize + "Mb" + " | ");
+						
+							
+	
+						long timeInmillisec = Long.parseLong(iduration);
+						long duration = timeInmillisec / 1000;
+						int hours = (int) (duration / 3600);
+						int minutes = (int) ((duration - hours * 3600) / 60);
+						int seconds = (int) (duration - (hours * 3600 + minutes * 60));
+	
+						String time = String.format("%02d", hours) + ":"
+								+ String.format("%02d", minutes) + ":"
+								+ String.format("%02d", seconds);
+						// timeText2.setText(time);
+	
+						// audioview.requestFocus();
+	
+						list.setVisibility(View.INVISIBLE);
+						linearLayout.setVisibility(View.VISIBLE);
+	
+						buttonPlayStop.setBackgroundResource(R.drawable.pause_button);
+						boolMusicPlaying = true;
+						once = false;
+						playAudio();
+						return true;
+						}else{
+							return false;
+						}
+					}else{
+						return false;
+					}
+				}
+		});
+		
+		
 		service_rw.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {	
 				// TODO Auto-generated method stub
 			
-				mService.setMusicRewind();
-				stopService(new Intent());
+				if(mBound){
+					mService.setMusicRewind();
+					stopService(new Intent());
+				}
 				
 			}
 		});
@@ -936,6 +1062,8 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 				// holder.thumbImage.setImageBitmap(curThumb);
 				holder.thumbImage.setImageBitmap(null);
 				// curThumb = null;
+				
+				total_cnt += 1;
 			}
 			return convertView;
 		}
