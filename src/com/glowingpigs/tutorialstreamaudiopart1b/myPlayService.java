@@ -464,4 +464,22 @@ public class myPlayService extends Service implements OnCompletionListener,
 		NotificationManager mNotificationManager = (NotificationManager) getSystemService(ns);
 		mNotificationManager.cancel(NOTIFICATION_ID);
 	}
+	
+	
+	//0629 test source start
+	public void setMusicForward(){
+		mediaPlayer.seekTo(mediaPlayer.getCurrentPosition() + 2000);
+	}
+	
+	public void setMusicRewind(){
+		mediaPlayer.seekTo(mediaPlayer.getCurrentPosition() - 2000);
+		
+	}
+	
+	public void setMusicNextSong(){
+		
+		//mediaPlayer.seekTo(mediaPlayer.getCurrentPosition() + 500000);
+	}
+
+	//0629 test source end
 }

@@ -35,6 +35,7 @@ import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -66,11 +67,12 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 	private Boolean isRightContainer = false;
 	
 	private Button list_Button;
-	private Button play_Button; // PLAY 버튼
-	private Button pause_Button; // PAUSE 버튼
+	private Button play_Button; 
+	private Button pause_Button; 
 	private Button back_Button;
 	private Button home_Button;
-	
+	private Button rw_Button; //0629
+	private Button ff_Button; //0629
 
 	//
 	private Cursor audiocursor;
@@ -84,6 +86,8 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 	private TextView position_View;
 	private ImageView image_View;
 	//private TextView mContext;
+	
+	private int position_main = 0;
 
 	//
 	private myPlayService mService = null;
@@ -150,7 +154,7 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 		home_Button = (Button) findViewById(R.id.home);
 		back_Button = (Button) findViewById(R.id.back);
 
-		Button service_end = (Button) findViewById(R.id.rw);
+		Button service_rw = (Button) findViewById(R.id.rw);//0629
 		Button service_ff = (Button) findViewById(R.id.ff);
 		Button service_start = (Button) findViewById(R.id.play);
 		// Button service_pause = (Button) findViewById(R.id.pause);
@@ -164,8 +168,133 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 
 		linearLayout.setVisibility(View.VISIBLE);
 		list.setVisibility(View.INVISIBLE);
+		
+		
+		//ff main button 0629 시작 
+		
+		service_ff.setOnLongClickListener(new OnLongClickListener() {
+			
+			@Override
+			public boolean onLongClick(View v) {
+				// TODO Auto-generated method stub
+				if(mBound){
+					int position = position_main + 1;
+					position_main += 1;
+					//Log.i("position2", String.valueOf(position));
+					
+					list.setId(position);
+					audio_column_index = audiocursor
+							.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA);
+					//position_View.setText(audiocursor.getString(audio_column_index));
+					audiocursor.moveToPosition(position);
 
-		//왼쪽 상단에 홈 버튼 눌렀을때 이벤트 발생하게 하는 소스 시작
+
+					// filename = audiocursor.getString(audio_column_index);
+					strAudioLink = audiocursor.getString(audio_column_index);
+					position_View.setText(strAudioLink);			
+
+					// audioview.setaudioPath(filename);
+					audiocursor.moveToPosition(position);
+
+					audio_column_index = audiocursor
+							.getColumnIndexOrThrow(MediaStore.Audio.Media.DISPLAY_NAME);
+					// movie_Name.setText(audiocursor.getString(audio_column_index));
+					audiocursor.moveToPosition(position);
+
+					audio_column_index = audiocursor
+							.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION);
+					String iduration = audiocursor.getString(audio_column_index);
+					// audiocursor.moveToPosition(position);
+
+					audio_column_index = audiocursor
+							.getColumnIndexOrThrow(MediaStore.Audio.Media.ARTIST);
+					// audiocursor.moveToPosition(position);
+					artist_View.setText(audiocursor.getString(audio_column_index));
+
+					audio_column_index = audiocursor
+							.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM);
+					// audiocursor.moveToPosition(position);
+					album_View.setText(audiocursor.getString(audio_column_index));
+					
+
+					audio_column_index = audiocursor
+							.getColumnIndexOrThrow(MediaStore.Audio.Media.YEAR);
+					// audiocursor.moveToPosition(position);
+					year_View.setText(audiocursor.getString(audio_column_index));
+					
+					audio_column_index = audiocursor
+							.getColumnIndexOrThrow(MediaStore.Audio.Media.SIZE);
+					//filesize_View.setText(audiocursor.getString(audio_column_index));
+					
+					String size = audiocursor.getString(audio_column_index);
+
+					long lsize = Long.parseLong(size);
+					double dsize = lsize / 1000000;
+					String ssize = String.format("%4.1f", dsize);
+
+					filesize_View.setText(ssize + "Mb" + " | ");
+					
+						
+
+					long timeInmillisec = Long.parseLong(iduration);
+					long duration = timeInmillisec / 1000;
+					int hours = (int) (duration / 3600);
+					int minutes = (int) ((duration - hours * 3600) / 60);
+					int seconds = (int) (duration - (hours * 3600 + minutes * 60));
+
+					String time = String.format("%02d", hours) + ":"
+							+ String.format("%02d", minutes) + ":"
+							+ String.format("%02d", seconds);
+					// timeText2.setText(time);
+
+					// audioview.requestFocus();
+
+					list.setVisibility(View.INVISIBLE);
+					linearLayout.setVisibility(View.VISIBLE);
+
+					buttonPlayStop.setBackgroundResource(R.drawable.pause_button);
+					boolMusicPlaying = true;
+					once = false;
+					playAudio();				
+					return true;
+				}else{
+					return false;
+				}
+				
+			}
+		});
+		
+		service_ff.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				if (mBound) {
+					// Call a method from the LocalService.
+					// However, if this call were something that might hang, then
+					// this request should
+					// occur in a separate thread to avoid slowing down the activity
+					// performance.					
+					mService.setMusicForward();
+				}
+			}
+		});
+		//0629 끝
+		//rw main button 0629 시작
+		service_rw.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {	
+				// TODO Auto-generated method stub
+			
+				mService.setMusicRewind();
+				stopService(new Intent());
+				
+			}
+		});
+		//0629 끝
+		
+
+		//main_left homebutton 
 		home_Button.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -182,9 +311,10 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 			}
 
 		});
-		//왼쪽 상단에 홈 버튼 눌렀을때 이벤트 발생하게 하는 소스 끝
 		
-	//왼쪽 상단에 back 버튼 눌렀을때 이벤트 발생하게 하는 소스 시작
+	
+		
+		//main_left backbutton 
 		
 		back_Button.setOnClickListener(new OnClickListener() {
 			
@@ -207,8 +337,8 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 			}
 		});
 		
-		//왼쪽 상단에 back 버튼 눌렀을때 이벤트 발생하게 하는 소스 끝
-
+		
+		//main_right_under_listicon
 		list_Button.setOnClickListener(new OnClickListener() {
 
 			public void onClick(View v) {
@@ -245,8 +375,8 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 		}
 	}
 
-	// 0625  소스 수정 시작 
-	//album art 소스
+	// 0625  ?뚯뒪 ?섏젙 ?쒖옉 
+	//album art ?뚯뒪
 	/*
 	
 	private static final BitmapFactory.Options sBitmapOptionsCache = new BitmapFactory.Options();
@@ -303,8 +433,7 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 		return null;
 	}
 */
-	// 0625 수정 소스 끝
-	
+	// 0625 ?섏젙 ?뚯뒪 ??	
 
 	// -- Broadcast Receiver to update position of seekbar from service --
 	private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
@@ -417,8 +546,6 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 			stopMyPlayService();
 			once = true;
 			
-			
-
 			serviceIntent.putExtra("sentAudioLink", strAudioLink);
 
 			try {
@@ -602,13 +729,17 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 				long id) {
 
 			System.gc();
+			position_main = position;
+			
 			audio_column_index = audiocursor
 					.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA);
-			position_View.setText(audiocursor.getString(audio_column_index));
+			//position_View.setText(audiocursor.getString(audio_column_index));
 			audiocursor.moveToPosition(position);
+
 
 			// filename = audiocursor.getString(audio_column_index);
 			strAudioLink = audiocursor.getString(audio_column_index);
+			position_View.setText(strAudioLink);			
 
 			// audioview.setaudioPath(filename);
 			audiocursor.moveToPosition(position);
@@ -632,15 +763,26 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 					.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM);
 			// audiocursor.moveToPosition(position);
 			album_View.setText(audiocursor.getString(audio_column_index));
+			
 
 			audio_column_index = audiocursor
 					.getColumnIndexOrThrow(MediaStore.Audio.Media.YEAR);
 			// audiocursor.moveToPosition(position);
 			year_View.setText(audiocursor.getString(audio_column_index));
 			
+			//0629 시작
+			audio_column_index = audiocursor
+					.getColumnIndexOrThrow(MediaStore.Audio.Media.SIZE);
+			//filesize_View.setText(audiocursor.getString(audio_column_index));
+			
+			String size = audiocursor.getString(audio_column_index);
 
-					
+			long lsize = Long.parseLong(size);
+			double dsize = lsize / 1000000;
+			String ssize = String.format("%4.1f", dsize);
 
+			filesize_View.setText(ssize + "Mb" + " | ");
+			
 			long timeInmillisec = Long.parseLong(iduration);
 			long duration = timeInmillisec / 1000;
 			int hours = (int) (duration / 3600);
@@ -663,7 +805,7 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 			playAudio();
 		}
 	};
-	
+	//0629 끝
 	
 
 	@Override
@@ -725,12 +867,14 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 				audiocursor.moveToPosition(position);
 				String size = audiocursor.getString(audio_column_index);
 
+				//0629 시잣
 				long lsize = Long.parseLong(size);
 				double dsize = lsize / 1000000;
 				String ssize = String.format("%4.1f", dsize);
 				holder.txtSize.setText(ssize + "Mb" + " | ");
 
 				filesize_View.setText(ssize + "Mb");
+				//0629 끝
 
 				// ListView
 				audio_column_index = audiocursor
