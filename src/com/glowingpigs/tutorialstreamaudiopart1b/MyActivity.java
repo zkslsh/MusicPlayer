@@ -609,9 +609,11 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 	// --- invoked from ButtonPlayStop listener above ----
 	private void buttonPlayStopClick() {
 		if (!boolMusicPlaying) {
-			buttonPlayStop.setBackgroundResource(R.drawable.pause_button);
-			playAudio();
-			boolMusicPlaying = true;
+			if(once!=false){
+				buttonPlayStop.setBackgroundResource(R.drawable.pause_button);
+				playAudio();
+				boolMusicPlaying = true;
+			}
 		} else {
 			if (boolMusicPlaying) {
 				buttonPlayStop.setBackgroundResource(R.drawable.play_button);
