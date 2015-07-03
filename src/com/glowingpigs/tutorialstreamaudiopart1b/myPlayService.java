@@ -206,14 +206,44 @@ public class myPlayService extends Service implements OnCompletionListener,
 		// // Log.d(TAG, "entered LogMediaPosition");
 		if (mediaPlayer.isPlaying()) {
 			mediaPosition = mediaPlayer.getCurrentPosition();
+			
+			//
+			long timeInmillisec = mediaPosition;
+			long duration = timeInmillisec / 1000;
+			int hours = (int) (duration / 3600);
+			int minutes = (int) ((duration - hours * 3600) / 60);
+			int seconds = (int) (duration - (hours * 3600 + minutes * 60));
+
+			String time = String.format("%02d", hours) + ":"
+					+ String.format("%02d", minutes) + ":"
+					+ String.format("%02d", seconds);			
+			
+			
+			//
+			
 			// if (mediaPosition < 1) {
 			// Toast.makeText(this, "Buffering...", Toast.LENGTH_SHORT).show();
 			// }
 			mediaMax = mediaPlayer.getDuration();
+			//
+			
+			timeInmillisec = mediaMax;
+			duration = timeInmillisec / 1000;
+			hours = (int) (duration / 3600);
+			minutes = (int) ((duration - hours * 3600) / 60);
+			seconds = (int) (duration - (hours * 3600 + minutes * 60));
+
+			String time_end = String.format("%02d", hours) + ":"
+					+ String.format("%02d", minutes) + ":"
+					+ String.format("%02d", seconds);				
+			
 			//seekIntent.putExtra("time", new Date().toLocaleString());
 			seekIntent.putExtra("counter", String.valueOf(mediaPosition));
 			seekIntent.putExtra("mediamax", String.valueOf(mediaMax));
 			seekIntent.putExtra("song_ended", String.valueOf(songEnded));
+			seekIntent.putExtra("currentPosition", time);
+			seekIntent.putExtra("durationPosition", time_end);
+			
 			sendBroadcast(seekIntent);
 		}
 	}
@@ -484,11 +514,6 @@ public class myPlayService extends Service implements OnCompletionListener,
 		mediaPlayer.seekTo(mediaPlayer.getCurrentPosition() - 2000);
 		
 	}
-	//////////////////////////////////////--------------------------------------------
-
-	
-	
-	///////////////////////////////////--------------------------------------------
 	
 	
 }

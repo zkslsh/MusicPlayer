@@ -73,8 +73,9 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 	private Button home_Button;
 	//private Button rw_Button; 
 	//private Button ff_Button; 
-
-	//
+	
+	
+	
 	private Cursor audiocursor;
 	private int count;
 	private ListView PhoneAideoList;
@@ -86,6 +87,8 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 	private TextView position_View;
 	private ImageView image_View;
 	//private TextView mContext;
+	private TextView currentPosition_View;
+	private TextView durationPosition_View;
 	
 	private int position_main = 0;
 
@@ -168,6 +171,9 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 		filesize_View = (TextView) findViewById(R.id.Filesize_View);
 		position_View = (TextView) findViewById(R.id.Position_View);
 		image_View = (ImageView) findViewById(R.id.Image_View);
+		
+		currentPosition_View = (TextView)findViewById(R.id.StartView);
+		durationPosition_View = (TextView)findViewById(R.id.EndView);		
 
 		linearLayout.setVisibility(View.VISIBLE);
 		list.setVisibility(View.INVISIBLE);
@@ -517,19 +523,15 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 	}
 
 	
-	//album art ???뮞
-	/*
+	//album art --------------------------------------------------------------------------
 	
 	private static final BitmapFactory.Options sBitmapOptionsCache = new BitmapFactory.Options();
-	private static final Uri sArtworkUri = Uri
-			.parse("content://media/external/audio/albumart");
+	private static final Uri sArtworkUri = Uri.parse("content://media/external/audio/albumart");
 
 	
-	public Bitmap getBitmapImage(int id, int w, int h) {
-		ContentResolver res = (ContentResolver) mContext.getContentDescription();
-		Uri uri = ContentUris.withAppendedId(sArtworkUri, id);
-		image_View = (ImageView)findViewById(R.id.Image_View);
-		image_View.setImageURI(uri);
+	public Bitmap getBitmapImage(Context context, int id, int w, int h) {
+		ContentResolver res = context.getContentResolver();
+		Uri uri = ContentUris.withAppendedId(sArtworkUri, id);			
 		if (uri != null) {
 			ParcelFileDescriptor fd = null;
 			try {
@@ -573,9 +575,11 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 		}
 		return null;
 	}
-*/
-	
 
+	//--------------------------------------------------------------------------
+
+	
+	
 	// -- Broadcast Receiver to update position of seekbar from service --
 	private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 		@Override
@@ -588,11 +592,18 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 		String counter = serviceIntent.getStringExtra("counter");
 		String mediamax = serviceIntent.getStringExtra("mediamax");
 		String strSongEnded = serviceIntent.getStringExtra("song_ended");
+		String currentPosition = serviceIntent.getStringExtra("currentPosition");
+		String durationPosition = serviceIntent.getStringExtra("durationPosition");
+		
+
 		int seekProgress = Integer.parseInt(counter);
 		seekMax = Integer.parseInt(mediamax);
 		songEnded = Integer.parseInt(strSongEnded);
 		seekBar.setMax(seekMax);
 		seekBar.setProgress(seekProgress);
+		currentPosition_View.setText(currentPosition);
+		durationPosition_View.setText(durationPosition);
+
 		if (songEnded == 1) {
 			buttonPlayStop.setBackgroundResource(R.drawable.play_button);
 		}
@@ -712,31 +723,9 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 		}else{
 			mService.playMedia();
 		}
-		//NextSong();
-
-		//} 
-		/*
-		else {
-			AlertDialog alertDialog = new AlertDialog.Builder(this).create();
-			alertDialog.setTitle("Network Not Connected...");
-			alertDialog.setMessage("Please connect to a network and try again");
-			alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					// here you can add functions
-				}
-			});
-			alertDialog.setIcon(R.drawable.icon);
-			buttonPlayStop.setBackgroundResource(R.drawable.play_button);
-			alertDialog.show();
-		}*/
+		
 	}
 
-	/////////////////////------------------------------------------------------
-
-	
-	
-	/////////////////////-------------------------------------------------------------------
 	
 	
 	
@@ -868,7 +857,11 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 				MediaStore.Audio.Media.SIZE, MediaStore.Audio.Media.DURATION,
 				MediaStore.Audio.Media.ARTIST, MediaStore.Audio.Media.ALBUM,
 				MediaStore.Audio.Media.YEAR, MediaStore.Audio.Media.SIZE
+				
+				
 				};
+		
+		
 		audiocursor = managedQuery(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
 				proj, null, null, null);
 		count = audiocursor.getCount();
@@ -883,6 +876,8 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 
 			System.gc();
 			position_main = position;
+			
+			
 			
 			audio_column_index = audiocursor
 					.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA);
@@ -1005,7 +1000,7 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 						.findViewById(R.id.runningTime);
 				holder.thumbImage = (ImageView) convertView
 						.findViewById(R.id.imgIcon);
-
+				
 				// ListView
 				audio_column_index = audiocursor
 						.getColumnIndexOrThrow(MediaStore.Audio.Media.DISPLAY_NAME);
@@ -1056,7 +1051,7 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 						MediaStore.Audio.Media.ALBUM,
 						MediaStore.Audio.Media.ARTIST,
 						MediaStore.Audio.Media.YEAR,
-						MediaStore.Audio.Media.SIZE
+						MediaStore.Audio.Media.SIZE						
 						};
 				@SuppressWarnings("deprecation")
 				Cursor cursor = managedQuery(
@@ -1069,12 +1064,12 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 
 				//
 				long albumId = ids;
-				Uri sArtworkUri = Uri
-						.parse("content://media/external/audio/albumart");
-				Uri sAlbumArtUri = ContentUris.withAppendedId(sArtworkUri,
-						albumId);
+				ids = R.id.Image_View;
+				
+				Uri sArtworkUri = Uri.parse("content://media/external/audio/albumart");
+				Uri sAlbumArtUri = ContentUris.withAppendedId(sArtworkUri,albumId);
 				image_View.setImageURI(sAlbumArtUri);
-				//
+				
 
 				ContentResolver crThumb = getContentResolver();
 				BitmapFactory.Options options = new BitmapFactory.Options();
