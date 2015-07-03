@@ -394,8 +394,17 @@ public class myPlayService extends Service implements OnCompletionListener,
 	@Override
 	public void onCompletion(MediaPlayer mp) {
 		// When song ends, need to tell activity to display "Play" button
+		
+		Intent intent=new Intent();
+		intent.setAction("com.glowingpigs.tutorialstreamaudiopart1b.senddata");
+		intent.setPackage("com.glowingpigs.tutorialstreamaudiopart1b");
+		intent.putExtra("sendData", "1");
+		sendBroadcast(intent);
+		
 		stopMedia();
-		stopSelf();
+		stopSelf();		
+		
+
 
 	}
 
@@ -466,7 +475,7 @@ public class myPlayService extends Service implements OnCompletionListener,
 	}
 	
 	
-	//0629 test source start
+	
 	public void setMusicForward(){
 		mediaPlayer.seekTo(mediaPlayer.getCurrentPosition() + 2000);
 	}
@@ -475,11 +484,11 @@ public class myPlayService extends Service implements OnCompletionListener,
 		mediaPlayer.seekTo(mediaPlayer.getCurrentPosition() - 2000);
 		
 	}
-	
-	public void setMusicNextSong(){
-		
-		//mediaPlayer.seekTo(mediaPlayer.getCurrentPosition() + 500000);
-	}
+	//////////////////////////////////////--------------------------------------------
 
-	//0629 test source end
+	
+	
+	///////////////////////////////////--------------------------------------------
+	
+	
 }

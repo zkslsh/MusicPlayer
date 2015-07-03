@@ -67,12 +67,12 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 	private Boolean isRightContainer = false;
 	
 	private Button list_Button;
-	private Button play_Button; 
-	private Button pause_Button; 
+	//private Button play_Button; 
+	//private Button pause_Button; 
 	private Button back_Button;
 	private Button home_Button;
-	private Button rw_Button; //0629
-	private Button ff_Button; //0629
+	//private Button rw_Button; 
+	//private Button ff_Button; 
 
 	//
 	private Cursor audiocursor;
@@ -109,6 +109,7 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 	private int seekMax;
 	private static int songEnded = 0;
 	boolean mBroadcastIsRegistered;
+	private BroadcastReceiver mReceiver;
 	
 	private int total_cnt = 0;
 
@@ -156,8 +157,8 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 		home_Button = (Button) findViewById(R.id.home);
 		back_Button = (Button) findViewById(R.id.back);
 
-		Button service_rw = (Button) findViewById(R.id.rw);//0629
-		Button service_ff = (Button) findViewById(R.id.ff);
+		Button service_rw = (Button) findViewById(R.id.rw);
+		final Button service_ff = (Button) findViewById(R.id.ff);
 		Button service_start = (Button) findViewById(R.id.play);
 		// Button service_pause = (Button) findViewById(R.id.pause);
 
@@ -172,7 +173,7 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 		list.setVisibility(View.INVISIBLE);
 		
 		
-		//ff main button 0629 시작 
+		//ff main button
 		
 		service_ff.setOnLongClickListener(new OnLongClickListener() {
 			
@@ -295,10 +296,9 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 				}
 			}
 		});
-		//0629 끝
+				
 		
-		
-		//rw main button 0629 시작
+		//rw main button 
 		service_rw.setOnLongClickListener(new OnLongClickListener() {
 			
 			@Override
@@ -417,8 +417,7 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 				
 			}
 		});
-		//0629 끝
-		
+				
 
 		//main_left homebutton 
 		home_Button.setOnClickListener(new OnClickListener() {
@@ -440,8 +439,7 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 		
 	
 		
-		//main_left backbutton 
-		
+		//main_left backbutton 		
 		back_Button.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -482,6 +480,23 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 				init_phone_audio_grid();
 			}
 		});
+		IntentFilter intentFilter=new IntentFilter();
+		intentFilter.addAction("com.glowingpigs.tutorialstreamaudiopart1b.senddata");		
+		
+		mReceiver=new BroadcastReceiver()
+		{
+
+			@Override
+			public void onReceive(Context context, Intent intent) {
+				// TODO Auto-generated method stub
+				String 	sData=intent.getStringExtra("sendData");
+				Toast.makeText(getApplicationContext(),sData,Toast.LENGTH_LONG).show();
+				service_ff.performLongClick();
+			}
+			
+		};
+		
+		registerReceiver(mReceiver, intentFilter);
 
 		try {
 			serviceIntent = new Intent(this, myPlayService.class);
@@ -501,8 +516,8 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 		}
 	}
 
-	// 0625  ?뚯뒪 ?섏젙 ?쒖옉 
-	//album art ?뚯뒪
+	
+	//album art ???뮞
 	/*
 	
 	private static final BitmapFactory.Options sBitmapOptionsCache = new BitmapFactory.Options();
@@ -559,7 +574,7 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 		return null;
 	}
 */
-	// 0625 ?섏젙 ?뚯뒪 ??	
+	
 
 	// -- Broadcast Receiver to update position of seekbar from service --
 	private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
@@ -697,6 +712,7 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 		}else{
 			mService.playMedia();
 		}
+		//NextSong();
 
 		//} 
 		/*
@@ -716,6 +732,15 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 		}*/
 	}
 
+	/////////////////////------------------------------------------------------
+
+	
+	
+	/////////////////////-------------------------------------------------------------------
+	
+	
+	
+	
 	// Handle progress dialogue for buffering...
 	private void showPD(Intent bufferIntent) {
 		String bufferValue = bufferIntent.getStringExtra("buffering");
@@ -898,7 +923,7 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 			// audiocursor.moveToPosition(position);
 			year_View.setText(audiocursor.getString(audio_column_index));
 			
-			//0629 시작
+			//0629 ?쒖옉
 			audio_column_index = audiocursor
 					.getColumnIndexOrThrow(MediaStore.Audio.Media.SIZE);
 			//filesize_View.setText(audiocursor.getString(audio_column_index));
@@ -933,8 +958,7 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 			playAudio();
 		}
 	};
-	//0629 끝
-	
+	//0629 ??	
 
 	@Override
 	protected void onRestart() {
@@ -995,15 +1019,14 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 				audiocursor.moveToPosition(position);
 				String size = audiocursor.getString(audio_column_index);
 
-				//0629 시잣
+				//0629 ?쒖옡
 				long lsize = Long.parseLong(size);
 				double dsize = lsize / 1000000;
 				String ssize = String.format("%4.1f", dsize);
 				holder.txtSize.setText(ssize + "Mb" + " | ");
 
 				filesize_View.setText(ssize + "Mb");
-				//0629 끝
-
+				//0629 ??
 				// ListView
 				audio_column_index = audiocursor
 						.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION);
