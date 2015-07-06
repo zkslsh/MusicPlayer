@@ -89,6 +89,7 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 	//private TextView mContext;
 	private TextView currentPosition_View;
 	private TextView durationPosition_View;
+	private TextView display_View;
 	
 	private int position_main = 0;
 
@@ -171,6 +172,7 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 		filesize_View = (TextView) findViewById(R.id.Filesize_View);
 		position_View = (TextView) findViewById(R.id.Position_View);
 		image_View = (ImageView) findViewById(R.id.Image_View);
+		display_View = (TextView) findViewById(R.id.Display_View);
 		
 		currentPosition_View = (TextView)findViewById(R.id.StartView);
 		durationPosition_View = (TextView)findViewById(R.id.EndView);		
@@ -217,7 +219,7 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 
 					audio_column_index = audiocursor
 							.getColumnIndexOrThrow(MediaStore.Audio.Media.DISPLAY_NAME);
-					// movie_Name.setText(audiocursor.getString(audio_column_index));
+					display_View.setText(audiocursor.getString(audio_column_index));
 					audiocursor.moveToPosition(position);
 
 					audio_column_index = audiocursor
@@ -246,7 +248,9 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 					//filesize_View.setText(audiocursor.getString(audio_column_index));
 					
 					String size = audiocursor.getString(audio_column_index);
-
+					
+					
+					
 					long lsize = Long.parseLong(size);
 					double dsize = lsize / 1000000;
 					String ssize = String.format("%4.1f", dsize);
@@ -342,7 +346,7 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 	
 						audio_column_index = audiocursor
 								.getColumnIndexOrThrow(MediaStore.Audio.Media.DISPLAY_NAME);
-						// movie_Name.setText(audiocursor.getString(audio_column_index));
+						display_View.setText(audiocursor.getString(audio_column_index));
 						audiocursor.moveToPosition(position);
 	
 						audio_column_index = audiocursor
@@ -372,6 +376,7 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 						
 						String size = audiocursor.getString(audio_column_index);
 	
+					
 						long lsize = Long.parseLong(size);
 						double dsize = lsize / 1000000;
 						String ssize = String.format("%4.1f", dsize);
@@ -527,11 +532,10 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 	
 	private static final BitmapFactory.Options sBitmapOptionsCache = new BitmapFactory.Options();
 	private static final Uri sArtworkUri = Uri.parse("content://media/external/audio/albumart");
-
 	
 	public Bitmap getBitmapImage(Context context, int id, int w, int h) {
 		ContentResolver res = context.getContentResolver();
-		Uri uri = ContentUris.withAppendedId(sArtworkUri, id);			
+		Uri uri = ContentUris.withAppendedId(sArtworkUri, id);		
 		if (uri != null) {
 			ParcelFileDescriptor fd = null;
 			try {
@@ -574,6 +578,8 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 			}
 		}
 		return null;
+		
+		
 	}
 
 	//--------------------------------------------------------------------------
@@ -856,9 +862,8 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 				MediaStore.Audio.Media.DISPLAY_NAME,
 				MediaStore.Audio.Media.SIZE, MediaStore.Audio.Media.DURATION,
 				MediaStore.Audio.Media.ARTIST, MediaStore.Audio.Media.ALBUM,
-				MediaStore.Audio.Media.YEAR, MediaStore.Audio.Media.SIZE
-				
-				
+				MediaStore.Audio.Media.YEAR 
+				//MediaStore.Audio.AlbumColumns.ALBUM_ART
 				};
 		
 		
@@ -877,8 +882,6 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 			System.gc();
 			position_main = position;
 			
-			
-			
 			audio_column_index = audiocursor
 					.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA);
 			//position_View.setText(audiocursor.getString(audio_column_index));
@@ -894,7 +897,7 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 
 			audio_column_index = audiocursor
 					.getColumnIndexOrThrow(MediaStore.Audio.Media.DISPLAY_NAME);
-			// movie_Name.setText(audiocursor.getString(audio_column_index));
+			display_View.setText(audiocursor.getString(audio_column_index));
 			audiocursor.moveToPosition(position);
 
 			audio_column_index = audiocursor
@@ -918,13 +921,16 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 			// audiocursor.moveToPosition(position);
 			year_View.setText(audiocursor.getString(audio_column_index));
 			
-			//0629 ?쒖옉
+			
 			audio_column_index = audiocursor
 					.getColumnIndexOrThrow(MediaStore.Audio.Media.SIZE);
 			//filesize_View.setText(audiocursor.getString(audio_column_index));
 			
 			String size = audiocursor.getString(audio_column_index);
-
+			
+			
+			
+			
 			long lsize = Long.parseLong(size);
 			double dsize = lsize / 1000000;
 			String ssize = String.format("%4.1f", dsize);
@@ -953,7 +959,7 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 			playAudio();
 		}
 	};
-	//0629 ??	
+	
 
 	@Override
 	protected void onRestart() {
@@ -1014,14 +1020,14 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 				audiocursor.moveToPosition(position);
 				String size = audiocursor.getString(audio_column_index);
 
-				//0629 ?쒖옡
+				
 				long lsize = Long.parseLong(size);
 				double dsize = lsize / 1000000;
 				String ssize = String.format("%4.1f", dsize);
 				holder.txtSize.setText(ssize + "Mb" + " | ");
 
 				filesize_View.setText(ssize + "Mb");
-				//0629 ??
+				
 				// ListView
 				audio_column_index = audiocursor
 						.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION);
@@ -1044,14 +1050,16 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 				holder.runningTime.setText(time);
 				audiocursor.moveToPosition(position);
 
-				String[] proj = { MediaStore.Audio.Media._ID,
+				String[] proj = { 
+						MediaStore.Audio.Media._ID,
 						MediaStore.Audio.Media.DISPLAY_NAME,
 						MediaStore.Audio.Media.DATA,
 						MediaStore.Audio.Media.DURATION,
 						MediaStore.Audio.Media.ALBUM,
 						MediaStore.Audio.Media.ARTIST,
 						MediaStore.Audio.Media.YEAR,
-						MediaStore.Audio.Media.SIZE						
+						MediaStore.Audio.Media.SIZE
+						//MediaStore.Audio.AlbumColumns.ALBUM_ART
 						};
 				@SuppressWarnings("deprecation")
 				Cursor cursor = managedQuery(
@@ -1062,7 +1070,7 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 				long ids = cursor.getLong(cursor
 						.getColumnIndex(MediaStore.Audio.Media._ID));
 
-				//
+				
 				long albumId = ids;
 				ids = R.id.Image_View;
 				
