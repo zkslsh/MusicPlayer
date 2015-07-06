@@ -275,14 +275,17 @@
                         android:gravity="right" >
 
                         <FrameLayout
-                            android:layout_width="250dp"
-                            android:layout_height="250dp"
+                            android:layout_width="275dp"
+                            android:layout_height="275dp"
                             android:layout_gravity="bottom" >
 
                             <ImageView
                                 android:id="@+id/Image_View"
                                 android:layout_width="match_parent"
-                                android:layout_height="match_parent" />
+                                android:layout_height="match_parent"
+                                android:layout_marginRight="10dp"
+                                android:layout_marginTop="10dp"
+                                android:background="@drawable/thumbnail_frame" />
                         </FrameLayout>
                     </LinearLayout>
 
@@ -297,7 +300,7 @@
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:layout_weight="0.8" >
+                            android:layout_weight="0.85" >
 
                             <!-- 오른쪽최상단 -->
 
@@ -306,13 +309,13 @@
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:layout_weight="1"
+                            android:layout_weight="0.9"
                             android:orientation="horizontal" >
 
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
-                                android:layout_weight="4" >
+                                android:layout_weight="8.5" >
                                 <ImageView 
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
@@ -332,7 +335,7 @@
                                     android:layout_height="wrap_content"
                                     android:text="Display2"
                                     android:textColor="#FFFFFFFF"
-                                    android:textSize="25sp" >
+                                    android:textSize="27sp" >
                                 </TextView>
                             </LinearLayout>
                         </LinearLayout>
@@ -353,7 +356,7 @@
                                     android:layout_height="wrap_content"
                                     android:text="Artist"
                                     android:textColor="#FFFFFFFF"
-                                    android:textSize="25sp" >
+                                    android:textSize="24sp" >
                                 </TextView>
                             </LinearLayout>
 
@@ -368,7 +371,7 @@
                                     android:layout_height="wrap_content"
                                     android:text="Artist2"
                                     android:textColor="#FFFFFFFF"
-                                    android:textSize="25sp" >
+                                    android:textSize="24sp" >
                                 </TextView>
                             </LinearLayout>
                         </LinearLayout>
@@ -389,7 +392,7 @@
                                     android:layout_height="wrap_content"
                                     android:text="Album"
                                     android:textColor="#FFFFFFFF"
-                                    android:textSize="25sp" >
+                                    android:textSize="24sp" >
                                 </TextView>
                             </LinearLayout>
 
@@ -404,7 +407,7 @@
                                     android:layout_height="wrap_content"
                                     android:text="Album2"
                                     android:textColor="#FFFFFFFF"
-                                    android:textSize="25sp" >
+                                    android:textSize="24sp" >
                                 </TextView>
                             </LinearLayout>
                         </LinearLayout>
@@ -425,7 +428,7 @@
                                     android:layout_height="wrap_content"
                                     android:text="Year"
                                     android:textColor="#FFFFFFFF"
-                                    android:textSize="25sp" >
+                                    android:textSize="24sp" >
                                 </TextView>
                             </LinearLayout>
 
@@ -440,7 +443,7 @@
                                     android:layout_height="wrap_content"
                                     android:text="Year2"
                                     android:textColor="#FFFFFFFF"
-                                    android:textSize="25sp" >
+                                    android:textSize="24sp" >
                                 </TextView>
                             </LinearLayout>
                         </LinearLayout>
@@ -461,7 +464,7 @@
                                     android:layout_height="wrap_content"
                                     android:text="File Size"
                                     android:textColor="#FFFFFFFF"
-                                    android:textSize="25sp" >
+                                    android:textSize="24sp" >
                                 </TextView>
                             </LinearLayout>
 
@@ -476,7 +479,7 @@
                                     android:layout_height="wrap_content"
                                     android:text="File Size2"
                                     android:textColor="#FFFFFFFF"
-                                    android:textSize="25sp" >
+                                    android:textSize="24sp" >
                                 </TextView>
                             </LinearLayout>
                         </LinearLayout>
@@ -497,7 +500,7 @@
                                     android:layout_height="wrap_content"
                                     android:text="Position"
                                     android:textColor="#FFFFFFFF"
-                                    android:textSize="25sp" >
+                                    android:textSize="24sp" >
                                 </TextView>
                             </LinearLayout>
 
@@ -512,9 +515,16 @@
                                     android:layout_height="wrap_content"
                                     android:text="Position2"
                                     android:textColor="#FFFFFFFF"
-                                    android:textSize="25sp" >
+                                    android:textSize="24sp" >
                                 </TextView>
                             </LinearLayout>
+                        </LinearLayout>
+                        <LinearLayout 
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1.05"
+                            android:orientation="horizontal">
+                            
                         </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>

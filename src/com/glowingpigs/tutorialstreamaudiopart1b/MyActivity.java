@@ -30,6 +30,7 @@ import android.os.Environment;
 import android.os.IBinder;
 import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
+import android.provider.MediaStore.MediaColumns;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.util.Log;
@@ -529,13 +530,13 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 
 	
 	//album art --------------------------------------------------------------------------
-	
+	/*
 	private static final BitmapFactory.Options sBitmapOptionsCache = new BitmapFactory.Options();
-	private static final Uri sArtworkUri = Uri.parse("content://media/external/audio/albumart");
+	private static final Uri sArtworkUri = Uri.parse("/storage/usb0/LOSER");
 	
 	public Bitmap getBitmapImage(Context context, int id, int w, int h) {
 		ContentResolver res = context.getContentResolver();
-		Uri uri = ContentUris.withAppendedId(sArtworkUri, id);		
+		Uri uri = ContentUris.withAppendedId(sArtworkUri, R.id.Image_View);		
 		if (uri != null) {
 			ParcelFileDescriptor fd = null;
 			try {
@@ -581,7 +582,7 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 		
 		
 	}
-
+	*/
 	//--------------------------------------------------------------------------
 
 	
@@ -862,8 +863,7 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 				MediaStore.Audio.Media.DISPLAY_NAME,
 				MediaStore.Audio.Media.SIZE, MediaStore.Audio.Media.DURATION,
 				MediaStore.Audio.Media.ARTIST, MediaStore.Audio.Media.ALBUM,
-				MediaStore.Audio.Media.YEAR 
-				//MediaStore.Audio.AlbumColumns.ALBUM_ART
+				MediaStore.Audio.Media.YEAR
 				};
 		
 		
@@ -931,6 +931,8 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 			
 			
 			
+			
+			
 			long lsize = Long.parseLong(size);
 			double dsize = lsize / 1000000;
 			String ssize = String.format("%4.1f", dsize);
@@ -992,12 +994,14 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 			ViewHolder holder;
 			String id = null;
 
+			
 			convertView = null;
 			if (convertView == null) {
 				//
 				convertView = LayoutInflater.from(vContext).inflate(
 						R.layout.listitem, parent, false);
 				holder = new ViewHolder();
+				
 				holder.txtTitle = (TextView) convertView
 						.findViewById(R.id.txtTitle);
 				holder.txtSize = (TextView) convertView
@@ -1006,6 +1010,7 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 						.findViewById(R.id.runningTime);
 				holder.thumbImage = (ImageView) convertView
 						.findViewById(R.id.imgIcon);
+						
 				
 				// ListView
 				audio_column_index = audiocursor
@@ -1058,9 +1063,9 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 						MediaStore.Audio.Media.ALBUM,
 						MediaStore.Audio.Media.ARTIST,
 						MediaStore.Audio.Media.YEAR,
-						MediaStore.Audio.Media.SIZE
-						//MediaStore.Audio.AlbumColumns.ALBUM_ART
+						MediaStore.Audio.Media.SIZE					
 						};
+				
 				@SuppressWarnings("deprecation")
 				Cursor cursor = managedQuery(
 						MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, proj,
@@ -1092,9 +1097,14 @@ public class MyActivity extends Activity implements OnSeekBarChangeListener {
 				// curThumb = null;
 				
 				total_cnt += 1;
+				
+				
 			}
 			return convertView;
 		}
 	}
 
 }
+
+
+
